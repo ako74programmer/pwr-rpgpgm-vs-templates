@@ -1,0 +1,97 @@
+{
+	// Wysyłanie komunikatu do logu (Send message to log)
+	// Ten snippet wstawia kod dla prostego programu CLLE, który umożliwia wysłanie komunikatu do logu użytkownika za pomocą 
+	// polecenia SNDPGMMSG. Deklaruje zmienną &MSG jako typ *CHAR o długości 50 znaków, aby przechować wiadomość. 
+	// Po uruchomieniu snippet’u użytkownik może wprowadzić treść wiadomości, która zostanie przekazana do systemowego logu komunikatów. 
+	// Ten kod jest użyteczny do testowania programów CLLE oraz komunikowania informacji lub błędów podczas wykonywania.
+	"Send message to log": {
+		"scope": "clle,cl,clp",
+		"prefix": "sendmsg",
+		"body": [
+			"PGM",
+			"    DCL VAR(&MSG) TYPE(*CHAR) LEN(50) VALUE('$1')",
+			"    SNDPGMMSG MSG(&MSG)",
+			"ENDPGM"
+		],
+		"description": "Send a program message in CLLE"
+	},
+
+    // Czyszczenie kolejki komunikatów
+	// Użyteczne do szybkiego wyczyszczenia kolejki komunikatów dla podanego użytkownika. $1 to nazwa kolejki, $2 to biblioteka.
+	"Clear Message Queue": {
+        "scope": "clle,cl,clp",
+        "prefix": "clrmsgq",
+        "body": [
+            "PGM",
+            "    DCL VAR(&MSGQ) TYPE(*CHAR) LEN(10) VALUE('$1')",
+            "    DCL VAR(&LIB) TYPE(*CHAR) LEN(10) VALUE('$2')",
+            "    CLRMSGQ MSGQ(&LIB/&MSGQ)",
+            "ENDPGM"
+        ],
+        "description": "Clear specified message queue"
+    },
+
+	// Przełączanie trybu pracy systemu (np. na tryb bezpieczny)
+	// Snippet do zmiany trybu pracy systemu, np. trybu bezpiecznego. Zamień $1 na odpowiedni tryb, np. SECURE
+	"Change System Operating Mode": {
+        "scope": "clle,cl,clp",
+        "prefix": "chgsysmode",
+        "body": [
+            "PGM",
+            "    DCL VAR(&MODE) TYPE(*CHAR) LEN(10) VALUE('$1')",
+            "    CHGSYSVAL SYSVAL(QSFWERR) VALUE(&MODE)",
+            "    SNDPGMMSG MSG('System mode changed to ' *CAT &MODE)",
+            "ENDPGM"
+        ],
+        "description": "Change system operating mode"
+    },
+
+	// Zakończenie określonego zadania użytkownika
+	// Ten snippet umożliwia zakończenie wybranego zadania. 
+	// Zamień $1, $2 i $3 na odpowiednio: nazwę zadania, nazwę użytkownika oraz numer zadania.
+	"End Job": {
+        "scope": "clle,cl,clp",
+        "prefix": "endjob",
+        "body": [
+            "PGM",
+            "    DCL VAR(&JOB) TYPE(*CHAR) LEN(10) VALUE('$1')",
+            "    DCL VAR(&USER) TYPE(*CHAR) LEN(10) VALUE('$2')",
+            "    DCL VAR(&JOBNBR) TYPE(*CHAR) LEN(6) VALUE('$3')",
+            "    ENDJOB JOB(&JOB/&USER/&JOBNBR)",
+            "ENDPGM"
+        ],
+        "description": "End a specific job for a user"
+    },
+
+	// Wyświetlenie liczby aktywnych użytkowników
+	// Snippet ten zlicza aktywnych użytkowników i wyświetla tę wartość jako wiadomość. 
+	// Przydatne do szybkiego sprawdzenia ilości aktywnych połączeń.
+	"Count Active Users": {
+        "scope": "clle,cl,clp",
+        "prefix": "countusers",
+        "body": [
+            "PGM",
+            "    DCL VAR(&USERS) TYPE(*DEC) LEN(5 0)",
+            "    RTVJOBA JOBTYPE(&USERS)",
+            "    SNDPGMMSG MSG('Active Users: ' *CAT &USERS)",
+            "ENDPGM"
+        ],
+        "description": "Display the count of active users"
+    },
+
+	// Wyświetlanie wartości zmiennej systemowej
+	// Użyj tego szablonu, aby szybko pobrać i wyświetlić wartość systemową w konsoli. 
+	// Po wpisaniu rtsysval i wybraniu snippet, zamień $1 na nazwę zmiennej systemowej, np. QTIME.
+	"Retrieve System Value": {
+        "scope": "plaintext",
+        "prefix": "rtsysval",
+        "body": [
+            "PGM",
+            "    DCL VAR(&SYSVAL) TYPE(*CHAR) LEN(20)",
+            "    RTVSYSVAL SYSVAL('$1') RTNVAR(&SYSVAL)",
+            "    SNDPGMMSG MSG('System Value: ' *CAT &SYSVAL)",
+            "ENDPGM"
+        ],
+        "description": "Retrieve and display a system value"
+    }
+}
